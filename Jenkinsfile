@@ -49,9 +49,9 @@ pipeline {
                     docker.withRegistry("${registry}", registryCredentials ){
                         sh "docker build -t backend-nest-test-kcr ."
                         sh "docker tag backend-nest-test-kcr ${dockerImagePrefix}/backend-nest-test-kcr"
-                        sh "docker tag backend-nest-test-kcr ${dockerImage}/backend-nest-test-kcr:${BUILD_NUMBER}"
+                        sh "docker tag backend-nest-test-kcr ${dockerImagePrefix}/backend-nest-test-kcr:${BUILD_NUMBER}"
                         sh "docker push ${dockerImagePrefix}/backend-nest-test-kcr"
-                        sh "docker push ${dockerImage}/backend-nest-test-kcr:${BUILD_NUMBER}"
+                        sh "docker push ${dockerImagePrefix}/backend-nest-test-kcr:${BUILD_NUMBER}"
                     }
                 }
             }
@@ -65,7 +65,7 @@ pipeline {
             }
             steps {
                 withKubeConfig([credentialsId: 'gcp-kubeconfig']) {
-                    sh "kubectl -n lab-kcr set image deployments/backend-nest-test-kcr backend-nest-test-kcr=${dockerImage}/backend-nest-test-kcr:${BUILD_NUMBER}"
+                    sh "kubectl -n lab-kcr set image deployments/backend-nest-test-kcr backend-nest-test-kcr=${dockerImagePrefix}/backend-nest-test-kcr:${BUILD_NUMBER}"
                 }
             }
         }
