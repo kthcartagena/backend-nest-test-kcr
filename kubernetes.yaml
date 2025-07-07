@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lab-kcr
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-nest-test-kcr
+  namespace: lab-kcr
+  labels:
+    app: backend-nest-test-kcr
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend-nest-test-kcr
+  template:
+    metadata:
+      labels:
+        app: backend-nest-test-kcr
+    spec:
+      containers:
+      - name: backend-nest-test-kcr
+        image: us-west1-docker.pkg.dev/lab-agibiz/docker-repository/backend-nest-test-kcr
+        imagePullPolicy: Always
+      imagePullSecrets:
+      - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-nest-test-kcr-svc
+  namespace: lab-kcr
+  labels:
+    app: backend-nest-test-kcr-svc
+spec:
+  selector:
+    app: backend-nest-test-kcr
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 4011
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-backend-nest-test-kcr
+  namespace: lab-kcr
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: kcr.devops.cl
+    http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: backend-nest-test-kcr-svc
+            port:
+              number: 80
