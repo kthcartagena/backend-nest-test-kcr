@@ -48,7 +48,7 @@ pipeline {
                 script {
                     docker.withRegistry("${registry}", registryCredentials ){
                         sh "docker build -t backend-nest-test-kcr ."
-                        sh "docker tag backend-nest-cmd ${dockerImagePrefix}/backend-nest-test-kcr"
+                        sh "docker tag backend-nest-test-kcr ${dockerImagePrefix}/backend-nest-test-kcr"
                         sh "docker push ${dockerImagePrefix}/backend-nest-test-kcr"
                     }
                 }
